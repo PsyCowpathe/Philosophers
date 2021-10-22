@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 14:10:42 by agirona           #+#    #+#             */
-/*   Updated: 2021/10/21 20:56:39 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/10/22 19:31:02 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ int	error(t_data *data, int output, int ret, int phase)
 		ft_putstr("Malloc failed !");
 	else if (output == 6)
 		ft_putstr("Thread creation failed !");
+	else if (output == 7)
+		ft_putstr("Mutex creation failed !");
 	free_all(data, phase);
 	return (ret);
 }

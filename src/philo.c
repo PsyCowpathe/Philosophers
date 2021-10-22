@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:59:41 by agirona           #+#    #+#             */
-/*   Updated: 2021/10/21 20:56:38 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/10/22 19:31:01 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,13 @@ void	*someone_theres(void *ptr)
 	{
 		if (i >= data->population)
 			i = 0;
-		//mutex
+		pthread_mutex_lock(&data->mutex[0]);
 		if (data->philo[i].alive == 0)
+		{
+			printf("%lli %i died\n", get_time(), i);
 			data->rip = 1;
+		}
+		pthread_mutex_unlock(&data->mutex[0]);
 		i++;
 	}
 	return (NULL);
@@ -42,10 +46,26 @@ void	*someone_theres(void *ptr)
 void	*lets_feast(void *ptr)
 {
 	t_philo		*philo;
+	long long	start_time;
+	long long 	time;
 
 	philo = ptr;
-	if (philo->thinking == 1)
-		printf("%lli %i is thinking\n", get_time(), philo->number);
+	start_time = get_time();
+	while (philo->alive == 1)
+	{
+		pthread_mutex_lock(philo->mutex);
+		time = get_time();
+		if (time >= start_time + philo->time_die)
+			philo->alive = 0;
+		if (philo->alive == 0 || *philo->rip == 1)
+		{
+			pthread_mutex_unlock(philo->mutex);
+			return (NULL);
+		}
+		if (philo->thinking == 1)
+			printf("%lli %i is thinking\n", time, philo->number);
+		pthread_mutex_unlock(philo->mutex);
+	}
 	return (NULL);
 }
 
@@ -79,10 +99,12 @@ int	main(int argc, char **argv)
 		return (0);
 	if (init_struct(&data, argc, argv) == 0)
 		return (error(&data, MALLOC_ERROR, 0, 1));
+	if (init_mutex(&data) == 0)
+		return (error(&data, MUTEX_ERROR, 0, 2));
 	if (init_philo(&data) == 0)
-		return (error(&data, MALLOC_ERROR, 0, 2));
+		return (error(&data, MALLOC_ERROR, 0, 3));
 	if (philo(&data) == 0)
-		return (error(&data, THREAD_ERROR, 0, 3));
+		return (error(&data, THREAD_ERROR, 0, 4));
 	return (1);
 }
 

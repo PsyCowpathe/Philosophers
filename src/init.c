@@ -6,11 +6,28 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 20:47:24 by agirona           #+#    #+#             */
-/*   Updated: 2021/10/21 20:56:39 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/10/22 19:31:02 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+int		init_mutex(t_data *data)
+{
+	int		i;
+
+	data->mutex = malloc(sizeof(data->mutex) * data->population + 1);
+	if (data->mutex == NULL)
+		return (0);
+	i = 0;
+	while (i < data->population + 1)
+	{
+		if (pthread_mutex_init(&data->mutex[i], NULL) != 0) //dont forget destroy
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int		init_philo(t_data *data)
 {
@@ -18,7 +35,9 @@ int		init_philo(t_data *data)
 
 	i = 0;
 	data->philo = NULL;
-	data->philo = malloc(sizeof(data->philo) * data->population);
+	ft_putstr("ici\n");
+	data->philo = malloc(sizeof(t_philo) * data->population);
+	ft_putstr("la\n");
 	if (data->philo == NULL)
 		return (0);
 	while (i < data->population)
@@ -29,7 +48,9 @@ int		init_philo(t_data *data)
 		data->philo[i].fork = 0;
 		data->philo[i].sleeping = 0;
 		data->philo[i].thinking = 1;
-		data->philo[i].mutex = data->mutex;
+		data->philo[i].mutex = &data->mutex[0];
+		data->philo[i].time_die = data->die;
+		data->philo[i].rip = &data->rip;
 		i++;
 	}
 	return (1);
