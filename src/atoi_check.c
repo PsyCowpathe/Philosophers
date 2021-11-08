@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 17:22:44 by agirona           #+#    #+#             */
-/*   Updated: 2021/10/20 17:25:38 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/08 15:55:49 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	conv_check(const char *str, int i, int neg, int *isint)
 	return (res * neg);
 }
 
-int	ft_atoi_check(const char *str, int *isint)
+int	ft_atoi_check(const char *str, int *isint) //c pas boooooooooooooo:wq
 {
 	int		i;
 	int		neg;

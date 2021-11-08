@@ -6,75 +6,79 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 20:47:24 by agirona           #+#    #+#             */
-/*   Updated: 2021/10/22 19:31:02 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/08 19:16:11 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int		init_mutex(t_data *data)
-{
-	int		i;
-
-	data->mutex = malloc(sizeof(data->mutex) * data->population + 1);
-	if (data->mutex == NULL)
-		return (0);
-	i = 0;
-	while (i < data->population + 1)
-	{
-		if (pthread_mutex_init(&data->mutex[i], NULL) != 0) //dont forget destroy
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-int		init_philo(t_data *data)
+void	init_philo(t_data *data)
 {
 	int		i;
 
 	i = 0;
-	data->philo = NULL;
-	ft_putstr("ici\n");
-	data->philo = malloc(sizeof(t_philo) * data->population);
-	ft_putstr("la\n");
-	if (data->philo == NULL)
-		return (0);
 	while (i < data->population)
 	{
 		data->philo[i].number = i + 1;
 		data->philo[i].alive = 1;
-		data->philo[i].eating = 0;
-		data->philo[i].fork = 0;
-		data->philo[i].sleeping = 0;
-		data->philo[i].thinking = 1;
-		data->philo[i].mutex = &data->mutex[0];
-		data->philo[i].time_die = data->die;
-		data->philo[i].rip = &data->rip;
+		data->philo[i].rfork = &data->mutex[i];
+		if (i + 1 == data->population)
+			data->philo[i].lfork = &data->mutex[0];
+		else
+			data->philo[i].lfork = &data->mutex[i + 1];
+		data->philo[i].data = data;
 		i++;
 	}
+}
+
+int	init_mutex(t_data *data)
+{
+	int		i;
+
+	i = 0;
+	while (i < data->population)
+	{
+		data->forks[i] = 1;
+		if (pthread_mutex_init(&data->mutex[i], NULL) != 0) //destroy at the end
+			return (0);
+		i++;
+	}
+	if (pthread_mutex_init(&data->write, NULL) != 0) //destroy at the end
+		return (0);
 	return (1);
 }
 
-int	init_struct(t_data *data, int argc, char **argv)
+int	malloc_struct(t_data *data)
+{
+	data->philo = malloc(sizeof(t_philo) * data->population);
+	if (data->philo == NULL)
+		return (0);
+	data->thread = malloc(sizeof(data->thread) * data->population);
+	if (data->thread == NULL)
+		return (0);
+	data->forks = malloc(sizeof(int) * data->population);
+	if (data->forks == NULL)
+		return (0);
+	data->mutex = malloc(sizeof(data->mutex) * data->population);
+	if (data->mutex == NULL)
+		return (0);
+	return (1);
+}
+
+void	init_struct(t_data *data, int argc, char **argv)
 {
 	int		tmp;
 
-	data->total_fork = NULL;
+	data->philo = NULL;
 	data->thread = NULL;
-	data->sated = -1;
-	data->rip = 0;
+	data->forks = NULL;
+	data->mutex = NULL;
 	data->population = ft_atoi_check(argv[1], &tmp);
-	data->die = ft_atoi_check(argv[2], &tmp);
-	data->eat = ft_atoi_check(argv[3], &tmp);
-	data->sleep = ft_atoi_check(argv[4], &tmp);
+	data->time_death = ft_atoi_check(argv[2], &tmp);
+	data->time_eat = ft_atoi_check(argv[3], &tmp);
+	data->time_sleep = ft_atoi_check(argv[4], &tmp);
+	data->max_eat = -1;
 	if (argc == 6)
-		data->sated = ft_atoi_check(argv[5], &tmp);
-	data->total_fork = malloc(sizeof(int) * data->population);
-	if (data->total_fork == NULL)
-		return (0);
-	data->thread = malloc(sizeof(data->thread) * data->population + 1);
-	if (data->thread == NULL)
-		return (0);
-	return (1);
+		data->max_eat = ft_atoi_check(argv[5], &tmp);
+	data->funeral = 0;
 }
