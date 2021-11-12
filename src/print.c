@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 15:17:06 by agirona           #+#    #+#             */
-/*   Updated: 2021/10/20 20:43:44 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/12 16:47:06 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,22 @@ void	ft_putchar(char c)
 	write(1, &c, 1);
 }
 
-void	ft_putstr(char *str)
+int		ft_strlen(char *str)
 {
 	int		i;
 
 	i = 0;
 	while (str[i])
-		ft_putchar(str[i++]);
+		i++;
+	return (i);
 }
 
-void	ft_putnbr(int nb)
+void	ft_putstr(char *str)
+{
+	write(1, str, ft_strlen(str));
+}
+
+void	ft_putnbr(long long nb)
 {
 	if (nb == -2147483648)
 	{

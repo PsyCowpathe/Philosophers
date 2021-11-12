@@ -6,7 +6,7 @@
 #    By: agirona <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/20 13:58:59 by agirona           #+#    #+#              #
-#    Updated: 2021/10/20 20:48:42 by agirona          ###   ########lyon.fr    #
+#    Updated: 2021/11/12 19:55:33 by agirona          ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c $(INC)
 all: create_obj_dir $(NAME)
 
 $(NAME) :	$(OBJS_PATH)
-			gcc $(OBJS_PATH) -o $(NAME)
+			gcc $(CFLAGS) $(OBJS_PATH) -o $(NAME)
 
 create_obj_dir :
 			rm -f obj || true

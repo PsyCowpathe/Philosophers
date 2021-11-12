@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 14:01:00 by agirona           #+#    #+#             */
-/*   Updated: 2021/10/22 19:31:03 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/12 19:55:32 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,26 +34,27 @@ typedef struct s_philo
 {
 	int					number;
 	int					alive;
-	int					eating;
+	pthread_mutex_t		*rfork;
+	pthread_mutex_t		*lfork;
 	int					fork;
-	int					sleeping;
-	int					thinking;
-	int					time_die;
-	pthread_mutex_t		*mutex;
-	int					*rip;
+	long long			last_meal;
+	pthread_mutex_t		meal;
+	struct s_data		*data;
 }				t_philo;
 
 typedef struct s_data
 {
+	int					population;
+	int					time_death;
+	int					time_eat;
+	int					time_sleep;
+	int					max_eat;
+	int					funeral;
+	int					rdy;
+	long long			first_meal;
 	t_philo				*philo;
 	pthread_t			*thread;
-	int					*total_fork;
-	int					population;
-	int					die;
-	int					eat;
-	int					sleep;
-	int					sated;
-	int					rip;
+	pthread_mutex_t		write;
 	pthread_mutex_t		*mutex;
 }				t_data;
 
@@ -61,7 +62,7 @@ typedef struct s_data
 
 void	ft_putchar(char c);
 void	ft_putstr(char *str);
-void	ft_putnbr(int nb);
+void	ft_putnbr(long long nb);
 
 //error
 
@@ -77,9 +78,9 @@ int		verif_arg(int argc, char **argv);
 
 //init
 
-int		init_struct(t_data *data, int argc, char **argv);
-int		init_philo(t_data *data);
-int		init_thread(t_data *data);
+void	init_struct(t_data *data, int argc, char **argv);
+int		malloc_struct(t_data *data);
 int		init_mutex(t_data *data);
+void	init_philo(t_data *data);
 
 #endif
