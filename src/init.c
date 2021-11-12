@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 20:47:24 by agirona           #+#    #+#             */
-/*   Updated: 2021/11/12 19:55:29 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/12 21:45:25 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ void	init_philo(t_data *data)
 		data->philo[i].alive = 1;
 		data->philo[i].rfork = &data->mutex[i];
 		data->philo[i].fork = 0;
+		data->philo[i].meal_count = 0;
+		data->philo[i].satied = 0;
 		if (i + 1 == data->population)
 			data->philo[i].lfork = &data->mutex[0];
 		else
@@ -76,6 +78,7 @@ void	init_struct(t_data *data, int argc, char **argv)
 	data->time_eat = ft_atoi_check(argv[3], &tmp);
 	data->time_sleep = ft_atoi_check(argv[4], &tmp);
 	data->max_eat = -1;
+	data->satied = 0;
 	if (argc == 6)
 		data->max_eat = ft_atoi_check(argv[5], &tmp);
 	data->funeral = 0;

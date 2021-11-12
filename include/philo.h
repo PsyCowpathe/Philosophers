@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 14:01:00 by agirona           #+#    #+#             */
-/*   Updated: 2021/11/12 19:55:32 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/12 21:45:27 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ typedef struct s_philo
 	int					fork;
 	long long			last_meal;
 	pthread_mutex_t		meal;
+	int					meal_count;
+	int					satied;
 	struct s_data		*data;
 }				t_philo;
 
@@ -51,6 +53,7 @@ typedef struct s_data
 	int					max_eat;
 	int					funeral;
 	int					rdy;
+	int					satied;
 	long long			first_meal;
 	t_philo				*philo;
 	pthread_t			*thread;

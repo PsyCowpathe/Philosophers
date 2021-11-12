@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:59:41 by agirona           #+#    #+#             */
-/*   Updated: 2021/11/12 19:55:31 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/12 21:48:58 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	*lets_feast(void *ptr)
 	philo = ptr;
 	while (philo->data->rdy == 0)
 		;
-	while (philo->data->funeral == 0)
+	while (philo->data->funeral == 0 && philo->satied != 1)
 	{
 		pick_a_fork(philo);
 		if (philo->fork == 2)
@@ -88,6 +88,7 @@ void	*lets_feast(void *ptr)
 			pthread_mutex_lock(&philo->meal);
 			philo->last_meal = get_time();
 			pthread_mutex_unlock(&philo->meal);
+			philo->meal_count++;
 			print_action(philo, 0);
 			accurate_sleep(philo->data->time_eat);
 			pthread_mutex_unlock(philo->rfork);
@@ -99,6 +100,36 @@ void	*lets_feast(void *ptr)
 		print_action(philo, 2);
 	}
 	return (NULL);
+}
+
+int	check_death(t_data *data)
+{
+	int		i;
+
+	i = 0;
+	while (data->funeral == 0 && data->satied < data->population)
+	{
+		if (data->philo[i].satied != 1 && data->max_eat != -1
+			&& data->philo[i].meal_count >= data->max_eat)
+		{
+			data->philo[i].satied = 1;
+			data->satied++;
+		}
+		pthread_mutex_lock(&data->philo[i].meal);
+		if (get_time() > data->philo[i].last_meal + data->time_death && data->philo[i].satied != 1)
+		{
+			pthread_mutex_unlock(&data->philo[i].meal);
+			print_action(&data->philo[i], 3);
+			data->funeral = 1;
+			return (1);
+		}
+		pthread_mutex_unlock(&data->philo[i].meal);
+		if (i + 1 == data->population)
+			i = 0;
+		else
+			i++;
+	}
+	return (1);
 }
 
 int	philo(t_data *data)
@@ -123,24 +154,7 @@ int	philo(t_data *data)
 		data->philo[i].last_meal = data->first_meal;
 		i++;
 	}
-	i = 0;
-	while (data->funeral == 0)
-	{
-		pthread_mutex_lock(&data->philo[i].meal);
-		if (get_time() > data->philo[i].last_meal + data->time_death)
-		{
-			pthread_mutex_unlock(&data->philo[i].meal);
-			print_action(&data->philo[i], 3);
-			data->funeral = 1;
-			return (1);
-		}
-		pthread_mutex_unlock(&data->philo[i].meal);
-		if (i + 1 == data->population)
-			i = 0;
-		else
-			i++;
-	}
-	return (1);
+	return (check_death(data));
 }
 
 int	main(int argc, char **argv)
