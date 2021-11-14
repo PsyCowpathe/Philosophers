@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 14:01:00 by agirona           #+#    #+#             */
-/*   Updated: 2021/11/12 21:45:27 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/14 19:12:27 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ typedef struct s_philo
 	pthread_mutex_t		*rfork;
 	pthread_mutex_t		*lfork;
 	int					fork;
-	long long			last_meal;
+	long long			last;
 	pthread_mutex_t		meal;
-	int					meal_count;
+	int					count;
 	int					satied;
 	struct s_data		*data;
 }				t_philo;
@@ -47,14 +47,14 @@ typedef struct s_philo
 typedef struct s_data
 {
 	int					population;
-	int					time_death;
-	int					time_eat;
-	int					time_sleep;
+	int					tdeath;
+	int					teat;
+	int					tsleep;
 	int					max_eat;
 	int					funeral;
 	int					rdy;
 	int					satied;
-	long long			first_meal;
+	long long			first;
 	t_philo				*philo;
 	pthread_t			*thread;
 	pthread_mutex_t		write;
@@ -85,5 +85,12 @@ void	init_struct(t_data *data, int argc, char **argv);
 int		malloc_struct(t_data *data);
 int		init_mutex(t_data *data);
 void	init_philo(t_data *data);
+
+//utility
+
+long long	get_time(void);
+void		accurate_sleep(long long time);
+void		free_all(t_data *data);
+void		print_action(t_philo *philo, int action);
 
 #endif

@@ -6,13 +6,13 @@
 #    By: agirona <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/20 13:58:59 by agirona           #+#    #+#              #
-#    Updated: 2021/11/12 20:54:39 by agirona          ###   ########lyon.fr    #
+#    Updated: 2021/11/14 19:09:21 by agirona          ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
-SRCS = philo.c error.c print.c atoi_check.c parsing.c init.c
+SRCS = philo.c error.c print.c atoi_check.c parsing.c init.c utility.c
 
 SRCS_DIR = src
 
