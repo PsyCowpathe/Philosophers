@@ -6,56 +6,16 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:59:41 by agirona           #+#    #+#             */
-/*   Updated: 2021/11/12 21:48:58 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/14 19:12:29 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long long	get_time(void)
-{
-	struct timeval	time;
-
-	if (gettimeofday(&time, NULL) == -1)
-		return (-1);
-	return ((time.tv_sec) * 1000 + (time.tv_usec) / 1000);
-}
-
-void	accurate_sleep(long long time)
-{
-	long long current;
-
-	current = get_time();
-	while (get_time() - current < time)
-		usleep(50);
-}
-
-void	print_action(t_philo *philo, int action)
-{
-	pthread_mutex_lock(&philo->data->write);
-	if (philo->data->funeral == 1)
-	{
-		pthread_mutex_unlock(&philo->data->write);
-		return ;
-	}
-	ft_putnbr(get_time() - philo->data->first_meal);
-	ft_putchar(' ');
-	ft_putnbr(philo->number);
-	if (action == 0)
-		ft_putstr(" is eating\n");
-	else if (action == 1)
-		ft_putstr(" is sleeping\n");
-	else if (action == 2)
-		ft_putstr(" is thinking\n");
-	else if (action == 3)
-		ft_putstr(" died\n");
-	else if (action == 4)
-		ft_putstr(" has taken a fork\n");
-	pthread_mutex_unlock(&philo->data->write);
-}
-
 void	pick_a_fork(t_philo *philo)
 {
+	if (philo->data->population == 1)
+		return ;
 	if (philo->number % 2 == 0)
 	{
 		pthread_mutex_lock(philo->rfork);
@@ -86,23 +46,23 @@ void	*lets_feast(void *ptr)
 		if (philo->fork == 2)
 		{
 			pthread_mutex_lock(&philo->meal);
-			philo->last_meal = get_time();
+			philo->last = get_time();
 			pthread_mutex_unlock(&philo->meal);
-			philo->meal_count++;
+			philo->count++;
 			print_action(philo, 0);
-			accurate_sleep(philo->data->time_eat);
+			accurate_sleep(philo->data->teat);
 			pthread_mutex_unlock(philo->rfork);
 			pthread_mutex_unlock(philo->lfork);
 			philo->fork = 0;
+			print_action(philo, 1);
+			accurate_sleep(philo->data->tsleep);
+			print_action(philo, 2);
 		}
-		print_action(philo, 1);
-		accurate_sleep(philo->data->time_sleep);
-		print_action(philo, 2);
 	}
 	return (NULL);
 }
 
-int	check_death(t_data *data)
+void	check_death(t_data *data)
 {
 	int		i;
 
@@ -110,18 +70,17 @@ int	check_death(t_data *data)
 	while (data->funeral == 0 && data->satied < data->population)
 	{
 		if (data->philo[i].satied != 1 && data->max_eat != -1
-			&& data->philo[i].meal_count >= data->max_eat)
-		{
+			&& data->philo[i].count >= data->max_eat && ++data->satied)
 			data->philo[i].satied = 1;
-			data->satied++;
-		}
+		accurate_sleep(1);
 		pthread_mutex_lock(&data->philo[i].meal);
-		if (get_time() > data->philo[i].last_meal + data->time_death && data->philo[i].satied != 1)
+		if (get_time() > data->philo[i].last + data->tdeath
+			&& data->philo[i].satied != 1)
 		{
 			pthread_mutex_unlock(&data->philo[i].meal);
 			print_action(&data->philo[i], 3);
 			data->funeral = 1;
-			return (1);
+			return ;
 		}
 		pthread_mutex_unlock(&data->philo[i].meal);
 		if (i + 1 == data->population)
@@ -129,7 +88,6 @@ int	check_death(t_data *data)
 		else
 			i++;
 	}
-	return (1);
 }
 
 int	philo(t_data *data)
@@ -141,20 +99,22 @@ int	philo(t_data *data)
 	while (i < data->population)
 	{
 		ret = 0;
-		ret = pthread_create(&data->thread[i], NULL, lets_feast, &data->philo[i]);
+		ret = pthread_create(&data->thread[i], NULL,
+				lets_feast, &data->philo[i]);
 		if (ret != 0)
 			return (0);
 		i++;
 	}
-	data->first_meal = get_time();
+	data->first = get_time();
 	data->rdy = 1;
 	i = 0;
 	while (i < data->population)
 	{
-		data->philo[i].last_meal = data->first_meal;
+		data->philo[i].last = data->first;
 		i++;
 	}
-	return (check_death(data));
+	check_death(data);
+	return (1);
 }
 
 int	main(int argc, char **argv)
@@ -164,21 +124,22 @@ int	main(int argc, char **argv)
 
 	i = 0;
 	if (argc < 5 || argc > 6)
-		return (error(&data, USAGE_ERROR, 0, 0)); //attentions aux nouvelles phases d'erreur
+		return (error(&data, USAGE_ERROR, 0, 0));
 	if (verif_arg(argc, argv) == 0)
 		return (0);
 	init_struct(&data, argc, argv);
 	if (malloc_struct(&data) == 0)
-		return (error(&data, MALLOC_ERROR, 0, 0)); //attention
+		return (error(&data, MALLOC_ERROR, 0, 1));
 	if (init_mutex(&data) == 0)
-		return (error(&data, MUTEX_ERROR, 0, 0)); //attention
+		return (error(&data, MUTEX_ERROR, 0, 2));
 	init_philo(&data);
 	if (philo(&data) == 0)
-		return (error(&data, THREAD_ERROR, 0, 0)); //attention
+		return (error(&data, THREAD_ERROR, 0, 3));
 	while (i < data.population)
 	{
-		pthread_join(data.thread[i], NULL);	
+		pthread_join(data.thread[i], NULL);
 		i++;
 	}
+	free_all(&data);
 	return (1);
 }

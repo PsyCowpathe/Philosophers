@@ -6,11 +6,34 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 14:10:42 by agirona           #+#    #+#             */
-/*   Updated: 2021/11/09 16:08:38 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/14 19:12:28 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	error_free(t_data *data, int phase)
+{
+	int		i;
+
+	i = 0;
+	if (phase >= 3)
+	{
+		while (i < data->population)
+		{
+			pthread_mutex_destroy(&data->mutex[i]);
+			pthread_mutex_destroy(&data->philo[i].meal);
+			i++;
+		}
+		pthread_mutex_destroy(&data->write);
+	}
+	if (phase >= 1)
+	{
+		free(data->philo);
+		free(data->thread);
+		free(data->mutex);
+	}
+}
 
 int	error(t_data *data, int output, int ret, int phase)
 {
@@ -37,5 +60,6 @@ int	error(t_data *data, int output, int ret, int phase)
 		ft_putstr("Thread creation failed !");
 	else if (output == 7)
 		ft_putstr("Mutex creation failed !");
+	error_free(data, phase);
 	return (ret);
 }

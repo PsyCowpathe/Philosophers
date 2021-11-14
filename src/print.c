@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 15:17:06 by agirona           #+#    #+#             */
-/*   Updated: 2021/11/12 16:47:06 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/14 19:12:26 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	ft_putchar(char c)
 	write(1, &c, 1);
 }
 
-int		ft_strlen(char *str)
+int	ft_strlen(char *str)
 {
 	int		i;
 
@@ -52,4 +52,28 @@ void	ft_putnbr(long long nb)
 	}
 	else
 		ft_putchar(nb + 48);
+}
+
+void	print_action(t_philo *philo, int action)
+{
+	pthread_mutex_lock(&philo->data->write);
+	if (philo->data->funeral == 1)
+	{
+		pthread_mutex_unlock(&philo->data->write);
+		return ;
+	}
+	ft_putnbr(get_time() - philo->data->first);
+	ft_putchar(' ');
+	ft_putnbr(philo->number);
+	if (action == 0)
+		ft_putstr(" is eating\n");
+	else if (action == 1)
+		ft_putstr(" is sleeping\n");
+	else if (action == 2)
+		ft_putstr(" is thinking\n");
+	else if (action == 3)
+		ft_putstr(" died\n");
+	else if (action == 4)
+		ft_putstr(" has taken a fork\n");
+	pthread_mutex_unlock(&philo->data->write);
 }
