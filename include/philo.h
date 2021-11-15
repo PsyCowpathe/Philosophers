@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 14:01:00 by agirona           #+#    #+#             */
-/*   Updated: 2021/11/14 19:12:27 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/15 12:35:13 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,28 +63,28 @@ typedef struct s_data
 
 //print
 
-void	ft_putchar(char c);
-void	ft_putstr(char *str);
-void	ft_putnbr(long long nb);
+void		ft_putchar(char c);
+void		ft_putstr(char *str);
+void		ft_putnbr(long long nb);
 
 //error
 
-int		error(t_data *data, int output, int ret, int phase);
+int			error(t_data *data, int output, int ret, int phase);
 
 //atoi_check
 
-int		ft_atoi_check(const char *str, int *isint);
+int			ft_atoi_check(const char *str, int *isint);
 
 //parsing
 
-int		verif_arg(int argc, char **argv);
+int			verif_arg(int argc, char **argv);
 
 //init
 
-void	init_struct(t_data *data, int argc, char **argv);
-int		malloc_struct(t_data *data);
-int		init_mutex(t_data *data);
-void	init_philo(t_data *data);
+void		init_struct(t_data *data, int argc, char **argv);
+int			malloc_struct(t_data *data);
+int			init_mutex(t_data *data);
+void		init_philo(t_data *data);
 
 //utility
 
@@ -92,5 +92,9 @@ long long	get_time(void);
 void		accurate_sleep(long long time);
 void		free_all(t_data *data);
 void		print_action(t_philo *philo, int action);
+
+//ft_itoa.c
+
+char		*ft_itoa(long long n);
 
 #endif

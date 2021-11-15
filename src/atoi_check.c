@@ -6,11 +6,25 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 17:22:44 by agirona           #+#    #+#             */
-/*   Updated: 2021/11/08 15:55:49 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/15 12:35:14 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+int	ft_strcmp(char *s1, char *s2)
+{
+	int				i;
+	unsigned char	*str1;
+	unsigned char	*str2;
+
+	str1 = (unsigned char *)s1;
+	str2 = (unsigned char *)s2;
+	i = 0;
+	while (str1[i] != '\0' && str2[i] != '\0' && str1[i] == str2[i])
+		i++;
+	return (str1[i] - str2[i]);
+}
 
 int	ft_ischar(const char *str, char c)
 {
@@ -29,23 +43,26 @@ int	ft_ischar(const char *str, char c)
 int	conv_check(const char *str, int i, int neg, int *isint)
 {
 	unsigned int	res;
+	int				final;
+	char			*tmp;
 
 	res = 0;
 	while (str[i] >= '0' && str[i] <= '9' && *isint == 1)
+		res = res * 10 + str[i++] - 48;
+	final = res * neg;
+	tmp = ft_itoa(final);
+	if (tmp == NULL)
 	{
-		res = res * 10 + str[i] - 48;
-		i++;
-		if (neg == 1 && res >= 214748364 && str[i] - 48 > 7)
-			*isint = 0;
-		else if (neg == -1 && res >= 214748364 && str[i] - 48 > 8)
-			*isint = 0;
-		if (res >= 2147483647 && str[i] != '\0')
-			*isint = 0;
+		*isint = 0;
+		return (0);
 	}
-	return (res * neg);
+	if (ft_strcmp((char *)str, tmp) != 0)
+		*isint = 0;
+	free(tmp);
+	return (res);
 }
 
-int	ft_atoi_check(const char *str, int *isint) //c pas boooooooooooooo:wq
+int	ft_atoi_check(const char *str, int *isint)
 {
 	int		i;
 	int		neg;

@@ -6,7 +6,7 @@
 /*   By: agirona <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 15:17:06 by agirona           #+#    #+#             */
-/*   Updated: 2021/11/14 19:12:26 by agirona          ###   ########lyon.fr   */
+/*   Updated: 2021/11/15 16:19:16 by agirona          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,4 +76,6 @@ void	print_action(t_philo *philo, int action)
 	else if (action == 4)
 		ft_putstr(" has taken a fork\n");
 	pthread_mutex_unlock(&philo->data->write);
+	if (action == 2 && philo->data->tsleep == 0)
+		accurate_sleep(1);
 }
