@@ -6,7 +6,7 @@
 #    By: agirona <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/20 13:58:59 by agirona           #+#    #+#              #
-#    Updated: 2021/11/15 16:35:33 by agirona          ###   ########lyon.fr    #
+#    Updated: 2021/11/15 16:38:03 by agirona          ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ INC	= include
 
 CFLAGS	= -Wall -Wextra -Werror -I $(INC)
 
-$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c $(INC)
+$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c $(INC)/philo.h
 	gcc $(CFLAGS) -c $< -o $@
 
 all: create_obj_dir $(NAME)
